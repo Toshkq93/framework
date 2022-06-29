@@ -2,7 +2,7 @@
 
 namespace Core;
 
-use Core\Loaders\LoaderInterface;
+use Core\Contracts\LoaderInterface;
 
 class Config
 {

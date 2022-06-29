@@ -8,7 +8,7 @@ use Smarty;
 class View
 {
     private Smarty $smarty;
-    private array $config;
+    private ContainerInterface $container;
 
     const TEMPLATE_DIR = __DIR__ . '/../app/views';
     const CACHE_DIR = __DIR__ . '/../tmp/cache';
@@ -18,9 +18,7 @@ class View
     public function __construct(ContainerInterface $container)
     {
         $this->smarty = new Smarty();
-        $config = $container->get(Config::class);
-        $this->config = $config->get('view.' . $config->get('view.default'));
-
+        $this->container = $container;
         $this->setupSettings();
     }
 
@@ -34,7 +32,7 @@ class View
     {
         $content = $this->fetch($templateFilename);
 
-        if (!empty($data)){
+        if (!empty($data)) {
             $this->smarty->assign($data);
         }
         $this->smarty->assign('content', $content);
@@ -66,18 +64,38 @@ class View
     }
 
     /**
+     * @param $var
+     * @param $value
+     * @param $nocache
+     * @return void
+     */
+    public function shareGlobal($var, $value = null, $nocache = false): void
+    {
+        if (is_array($var)) {
+            foreach ($var as $key => $item) {
+                $this->smarty->assignGlobal($key, $item, $nocache);
+            }
+        } else {
+            $this->smarty->assignGlobal($var, $value, $nocache);
+        }
+    }
+
+    /**
      * @return void
      */
     private function setupSettings(): void
     {
+        $config = $this->container->get(Config::class);
+        $config = $config->get('view.' . $config->get('view.default'));
+
         $this->smarty->setTemplateDir(self::TEMPLATE_DIR);
         $this->smarty->setCompileDir(self::COMPILE_DIR);
         $this->smarty->setCacheDir(self::CACHE_DIR);
 
-        $this->smarty->setCompileCheck($this->config['smarty_compile_check']);
-        $this->smarty->setCaching($this->config['smarty_caching']);
-        $this->smarty->setCacheLifetime($this->config['smarty_cache_lifetime']);
-        $this->smarty->setDebugging($this->config['smarty_debugging']);
+        $this->smarty->setCompileCheck($config['smarty_compile_check']);
+        $this->smarty->setCaching($config['smarty_caching']);
+        $this->smarty->setCacheLifetime($config['smarty_cache_lifetime']);
+        $this->smarty->setDebugging($config['smarty_debugging']);
         $this->smarty->setErrorReporting(E_ALL & ~E_NOTICE);
 
         if (!is_dir(self::PLUGINS_DIR)) {
@@ -89,6 +107,11 @@ class View
         if (!is_dir(self::COMPILE_DIR)) {
             @mkdir(self::COMPILE_DIR, 0777);
         }
+
+        $this->shareGlobal([
+            'config' => $this->container->get(Config::class),
+
+        ]);
 
         $this->smarty->addPluginsDir([self::PLUGINS_DIR]);
     }

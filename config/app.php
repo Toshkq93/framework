@@ -1,7 +1,10 @@
 <?php
 
 return [
-    'name' => [
-        'qwerty' => env('APP_NAME')
+    'name' => env('APP_NAME'),
+
+    'middleware' => [
+        \App\Middleware\ShareValidationErrors::class,
+        \App\Middleware\ClearValidationErrors::class,
     ]
 ];

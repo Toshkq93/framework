@@ -1,38 +1,48 @@
 <?php
 
-use Core\Config;
-use Core\Loaders\ArrayLoader;
-use Core\View;
-use DebugBar\DebugBar;
-use DebugBar\StandardDebugBar;
+use League\Route\Router;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Somnambulist\Components\Validation\Factory;
+use Core\Loaders\ArrayLoader;
+use Core\{
+    BcryptHasher,
+    Session,
+    View
+};
+use Core\Config;
+use Core\Contracts\{
+    HasherInterface,
+    SessionInterface
+};
+use Psr\Http\Message\{
+    ResponseInterface,
+    ServerRequestInterface
+};
+use Laminas\Diactoros\{
+    Response,
+    ServerRequestFactory
+};
 
 return [
-    Session::class => new Session(),
-    Request::class => new Request(
-        $_GET,
-        $_POST,
-        [],
-        $_COOKIE,
-        $_FILES,
-        $_SERVER
-    ),
-    DebugBar::class => new StandardDebugBar(),
-    View::class => function (ContainerInterface $container){
+    ServerRequestInterface::class => function () {
+        return ServerRequestFactory::fromGlobals(
+            $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES
+        );
+    },
+    ResponseInterface::class => new Response(),
+    Factory::class => new Factory(),
+    View::class => function (ContainerInterface $container) {
         $view = new View($container);
-
-        if (env('DEBUG')){
-            $view->assign('debugbarRenderer', $container->get(DebugBar::class)->getJavascriptRenderer());
-        }
 
         return $view;
     },
-    Config::class => function (){
+    Config::class => function () {
         $arrayLoader = new ArrayLoader(base_path('config'));
 
         return (new Config())
             ->load([$arrayLoader]);
     },
+    Router::class => new Router(),
+    SessionInterface::class => new Session(),
+    HasherInterface::class => new BcryptHasher(),
 ];

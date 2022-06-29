@@ -1,12 +1,18 @@
 <?php
 
-use App\Controllers\{
-    HomeController
+use App\Controllers\Auth\{
+    LoginController,
+    RegisterController
 };
-use FastRoute\RouteCollector;
-use function FastRoute\simpleDispatcher;
+use App\Controllers\HomeController;
 
-return $dispatcher = simpleDispatcher(function (RouteCollector $route) {
-    $route->get('/', [HomeController::class, 'index']);
-    $route->get('/show', [HomeController::class, 'show']);
+$router->get('/', [HomeController::class, 'index'])->setName('home');
+
+$router->group('/auth', function ($route) {
+    $route->get('register', [RegisterController::class, 'register'])->setName('auth.register');
+    $route->post('signup', [RegisterController::class, 'signup'])->setName('auth.signup');
+
+
+    $route->get('login', [LoginController::class, 'login'])->setName('auth.login');
+    $route->post('signin', [[LoginController::class, 'signin']])->setName('auth.signin');
 });

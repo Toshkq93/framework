@@ -9,7 +9,6 @@ use Psr\Container\ContainerInterface;
 
 class DB
 {
-    private $eloquentCapsule;
     private $config;
     private $connection;
 
@@ -40,10 +39,5 @@ class DB
         $capsule->bootEloquent();
 
         $this->eloquentCapsule = $capsule;
-    }
-
-    public function getCapsule()
-    {
-        return $this->eloquentCapsule;
     }
 }

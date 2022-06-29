@@ -2,8 +2,10 @@
 
 use Core\{
     ContainerInstance,
-    Router
+    View
 };
+use Laminas\Diactoros\Response\RedirectResponse;
+use Psr\Http\Message\ServerRequestInterface;
 
 if (!function_exists('getValidUri')) {
     function getValidUri()
@@ -15,15 +17,6 @@ if (!function_exists('getValidUri')) {
         }
 
         return rawurldecode($uri);
-    }
-}
-
-if (!function_exists('route')) {
-    function route()
-    {
-        $container = ContainerInstance::get();
-
-        return new Router($container, getValidUri());
     }
 }
 
@@ -39,11 +32,11 @@ if (!function_exists('env')) {
     {
         $value = getenv($key);
 
-        if ($value === null){
+        if ($value === null) {
             return $default;
         }
 
-        switch (strtolower($value)){
+        switch (strtolower($value)) {
             case $value === 'true':
                 return true;
             case $value == 'false':
@@ -51,5 +44,37 @@ if (!function_exists('env')) {
             default:
                 return $value;
         }
+    }
+}
+
+/*if (!function_exists('redirect')) {
+    function redirect(string $url, int $status = 302, array $headers = [])
+    {
+        return new \Laminas\Diactoros\Response($url, $status, $headers);
+    }
+}*/
+
+/*if (!function_exists('back')) {
+    function back(): RedirectResponse
+    {
+        return redirect(
+            ContainerInstance::get()
+                ->get(ServerRequestInterface::class)
+                ->getServerParams()['HTTP_REFERER']
+        );
+    }
+}*/
+
+if (!function_exists('view')) {
+    function view(string $template, array $data = [])
+    {
+        app(View::class)->render(str_replace('.', '/', $template) . '.tpl', $data);
+    }
+}
+
+if (!function_exists('app')) {
+    function app(string $instance = null)
+    {
+        return $instance ? ContainerInstance::get()->get($instance) : ContainerInstance::get();
     }
 }

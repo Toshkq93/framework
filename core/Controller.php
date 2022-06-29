@@ -2,51 +2,29 @@
 
 namespace Core;
 
-use Psr\Container\ContainerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Exceptions\ValidationException;
+use Laminas\Diactoros\ServerRequest;
+use Somnambulist\Components\Validation\Factory;
 
-class Controller
+abstract class Controller
 {
-    protected $middleware = [];
-
-    private $middlewareMap = [
-//        'auth' => AuthMiddleware::class,
-//        'ajax' => AjaxMiddleware::class
-    ];
-
-    public function __construct(
-        protected View $view
-    )
-    {
-    }
-
-    private function handleMiddleware(ContainerInterface $container)
-    {
-        if ($this->middleware) {
-            foreach ($this->middleware as $middlewareAlias) {
-                if (array_key_exists($middlewareAlias, $this->middlewareMap)) {
-                    (new $this->middlewareMap[$middlewareAlias]())->handle($container);
-                }
-            }
-        }
-    }
-
-    public function call(ContainerInterface $container)
-    {
-        $this->handleMiddleware($container);
-    }
-
     /**
-     * @param JsonResponse $response
-     * @param array $data
-     * @param int $status
-     * @return object|JsonResponse
+     * @param ServerRequest $request
+     * @param array $rules
+     * @return Factory
+     * @throws ValidationException
      */
-    public function jsonResponse(JsonResponse $response, array $data, int $status = 200)
+    public function validate(ServerRequest $request, array $rules): Factory
     {
-        return $response
-            ->setData($data)
-            ->setStatusCode($status)
-            ->send();
+        $validator = (new Factory)->make(
+            $request->getParsedBody() + $request->getUploadedFiles(),
+            $rules
+        );
+
+        if (!$validator->validate()){
+            throw new ValidationException($request, $validator->errors()->firstOfAll());
+        }
+
+        return $validator;
     }
 }

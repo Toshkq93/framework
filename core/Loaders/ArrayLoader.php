@@ -2,6 +2,7 @@
 
 namespace Core\Loaders;
 
+use Core\Contracts\LoaderInterface;
 use Exception;
 
 class ArrayLoader implements LoaderInterface
@@ -15,9 +16,13 @@ class ArrayLoader implements LoaderInterface
         $this->initFiles();
     }
 
-    public function parse()
+    /**
+     * @inheritdoc
+     */
+    public function parse(): array
     {
         $parsedFiles = [];
+
         foreach ($this->files as $namespace => $path) {
             try {
                 if (is_file($path)) {

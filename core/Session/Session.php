@@ -6,10 +6,7 @@ use Core\Contracts\SessionInterface;
 
 class Session implements SessionInterface
 {
-    /**
-     * @inheritdoc
-     */
-    public function get(string $key, mixed $default = null): mixed
+    public function get(string $key, mixed $default = null)
     {
         if ($this->exists($key)) {
             return $_SESSION[$key];
@@ -18,10 +15,7 @@ class Session implements SessionInterface
         return $default;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function set(string|array $key, mixed $value = null): void
+    public function set(string|array $key, mixed $value = null)
     {
         if (is_array($key)) {
             foreach ($key as $sessionKey => $sessionValue) {
@@ -34,18 +28,12 @@ class Session implements SessionInterface
         $_SESSION[$key] = $value;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function exists(string $key): bool
+    public function exists(string $key)
     {
         return isset($_SESSION[$key]) && !empty($_SESSION[$key]);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function clear(...$key): void
+    public function clear(...$key)
     {
         foreach ($key as $sessionKey) {
             unset($_SESSION[$sessionKey]);

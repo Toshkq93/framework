@@ -8,19 +8,12 @@ class ContainerInstance
 {
     protected static $container;
 
-    /**
-     * @param Container $container
-     * @return void
-     */
-    public static function set(Container $container): void
+    public static function set(Container $container)
     {
         self::$container = $container;
     }
 
-    /**
-     * @return Container
-     */
-    public static function get(): Container
+    public static function get()
     {
         return self::$container;
     }

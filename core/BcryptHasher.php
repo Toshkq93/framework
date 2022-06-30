@@ -8,7 +8,7 @@ use RuntimeException;
 class BcryptHasher implements HasherInterface
 {
 
-    public function create($plain)
+    public function create(string $plain)
     {
         $hash = password_hash($plain, PASSWORD_BCRYPT, $this->options());
 
@@ -19,12 +19,12 @@ class BcryptHasher implements HasherInterface
         return $hash;
     }
 
-    public function check($plain, $hash)
+    public function check(string $plain, string $hash)
     {
         return password_verify($plain, $hash);
     }
 
-    public function needsRehash($hash)
+    public function needsRehash(string $hash)
     {
         return password_needs_rehash($hash, PASSWORD_BCRYPT, $this->options());
     }

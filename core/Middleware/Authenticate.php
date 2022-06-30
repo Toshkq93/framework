@@ -12,15 +12,15 @@ class Authenticate implements MiddlewareInterface
 {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-//        $auth = app(Auth::class);
-//
-//        if ($auth->hasUserInSession()){
-//            try {
-//                $auth->setUserFromSession();
-//            }catch (\Exception $exception){
-////                $auth->logout();
-//            }
-//        }
+        $auth = app(Auth::class);
+
+        if ($auth->hasUserInSession()){
+            try {
+                $auth->setUserFromSession();
+            }catch (\Exception $exception){
+                $auth->logout();
+            }
+        }
 
         return $handler->handle($request);
     }

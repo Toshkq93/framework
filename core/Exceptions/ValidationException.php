@@ -15,26 +15,17 @@ class ValidationException extends Exception
         parent::__construct();
     }
 
-    /**
-     * @return string
-     */
-    public function getPath(): string
+    public function getPath()
     {
         return $this->request->getServerParams()['HTTP_REFERER'];
     }
 
-    /**
-     * @return array
-     */
-    public function getOldInput(): array
+    public function getOldInput()
     {
         return $this->request->getParsedBody();
     }
 
-    /**
-     * @return array
-     */
-    public function getErrors(): array
+    public function getErrors()
     {
         return $this->errors;
     }

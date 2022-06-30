@@ -16,10 +16,7 @@ class ArrayLoader implements LoaderInterface
         $this->initFiles();
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function parse(): array
+    public function parse()
     {
         $parsedFiles = [];
 
@@ -36,10 +33,7 @@ class ArrayLoader implements LoaderInterface
         return $parsedFiles;
     }
 
-    /**
-     * @return void
-     */
-    protected function initFiles(): void
+    protected function initFiles()
     {
         $files = array_diff(scandir($this->folder), array('..', '.'));
 

@@ -9,10 +9,6 @@ class Config
     protected $config = [];
     protected $cache = [];
 
-    /**
-     * @param array $loaders
-     * @return $this
-     */
     public function load(array $loaders): self
     {
         foreach ($loaders as $loader) {
@@ -26,11 +22,7 @@ class Config
         return $this;
     }
 
-    /**
-     * @param string $key
-     * @return mixed
-     */
-    public function get($key, $default = null): mixed
+    public function get($key, $default = null)
     {
         if ($this->existsInCache($key)) {
             return $this->fromCache($key);
@@ -42,11 +34,7 @@ class Config
         );
     }
 
-    /**
-     * @param $key
-     * @return mixed
-     */
-    protected function extractFromConfig($key): mixed
+    protected function extractFromConfig($key)
     {
         $filter = $this->config;
 
@@ -62,42 +50,24 @@ class Config
         return $filter;
     }
 
-    /**
-     * @param string $key
-     * @return mixed
-     */
-    protected function fromCache($key): mixed
+    protected function fromCache($key)
     {
         return $this->cache[$key];
     }
 
-    /**
-     * @param string $key
-     * @param string $value
-     * @return mixed
-     */
-    protected function addToCache($key, $value): mixed
+    protected function addToCache($key, $value)
     {
         $this->cache[$key] = $value;
 
         return $value;
     }
 
-    /**
-     * @param string $key
-     * @return bool
-     */
-    protected function existsInCache($key): bool
+    protected function existsInCache($key)
     {
         return isset($this->cache[$key]);
     }
 
-    /**
-     * @param array $filter
-     * @param string $value
-     * @return bool
-     */
-    protected function exists(array $filter, $value): bool
+    protected function exists(array $filter, $value)
     {
         return array_key_exists($value, $filter);
     }

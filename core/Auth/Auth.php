@@ -16,7 +16,7 @@ class Auth
     {
     }
 
-    public function attemp(string $username, string $password): bool
+    public function attemp(string $username, string $password)
     {
         $user = $this->getByUserName($username);
 
@@ -29,7 +29,7 @@ class Auth
         return true;
     }
 
-    public function user(): User
+    public function user()
     {
         return $this->user;
     }
@@ -57,17 +57,17 @@ class Auth
         return 'id';
     }
 
-    protected function setUserSession(User $user): void
+    protected function setUserSession(User $user)
     {
         $this->session->set('id', $user->id);
     }
 
-    protected function hasValidPassword(User $user, string $password): bool
+    protected function hasValidPassword(User $user, string $password)
     {
         return $this->hasher->check($user->password, $password);
     }
 
-    protected function getByUserName(string $username): User
+    protected function getByUserName(string $username)
     {
         return $this->user->where('email', $username)->first();
     }

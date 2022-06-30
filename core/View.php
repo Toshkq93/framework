@@ -34,7 +34,7 @@ class View
         return $this->smarty->fetch('layout\app.tpl');
     }
 
-    public function shareGlobal($var, $value = null, $nocache = false)
+    public function shareGlobal(string|array $var, mixed $value = null, bool $nocache = false)
     {
         if (is_array($var)) {
             foreach ($var as $key => $item) {

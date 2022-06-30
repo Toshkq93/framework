@@ -10,10 +10,10 @@ class View
     private Smarty $smarty;
     private ContainerInterface $container;
 
-    const TEMPLATE_DIR = __DIR__ . '/../app/views';
+    const TEMPLATE_DIR = __DIR__ . '/../app/Views';
     const CACHE_DIR = __DIR__ . '/../tmp/cache';
     const COMPILE_DIR = __DIR__ . '/../tmp/compiled';
-    const PLUGINS_DIR = __DIR__ . '/../app/views/smarty-plugins';
+    const PLUGINS_DIR = __DIR__ . '/../app/Views/smarty-plugins';
 
     public function __construct(ContainerInterface $container)
     {
@@ -22,54 +22,19 @@ class View
         $this->setupSettings();
     }
 
-    /**
-     * @param string $templateFilename
-     * @param array $data
-     * @return void
-     * @throws \SmartyException
-     */
-    public function render(string $templateFilename, array $data = [])
+    public function render(string $template, array $data = [])
     {
-        $content = $this->fetch($templateFilename);
-
         if (!empty($data)) {
             $this->smarty->assign($data);
         }
+
+        $content = $this->smarty->fetch($template);
         $this->smarty->assign('content', $content);
 
-        header("Content-type: text/html; charset=UTF-8");
-        print $this->fetch('layout\app.tpl');
-        die;
+        return $this->smarty->fetch('layout\app.tpl');
     }
 
-    /**
-     * @param $tpl_var
-     * @param $value
-     * @param $nocache
-     * @return Smarty
-     */
-    public function assign($tpl_var, $value = null, $nocache = false): Smarty
-    {
-        return $this->smarty->assign($tpl_var, $value, $nocache);
-    }
-
-    /**
-     * @param string $template
-     * @return string
-     * @throws \SmartyException
-     */
-    public function fetch(string $template): string
-    {
-        return $this->smarty->fetch($template);
-    }
-
-    /**
-     * @param $var
-     * @param $value
-     * @param $nocache
-     * @return void
-     */
-    public function shareGlobal($var, $value = null, $nocache = false): void
+    public function shareGlobal($var, $value = null, $nocache = false)
     {
         if (is_array($var)) {
             foreach ($var as $key => $item) {
@@ -80,10 +45,7 @@ class View
         }
     }
 
-    /**
-     * @return void
-     */
-    private function setupSettings(): void
+    private function setupSettings()
     {
         $config = $this->container->get(Config::class);
         $config = $config->get('view.' . $config->get('view.default'));
@@ -110,7 +72,6 @@ class View
 
         $this->shareGlobal([
             'config' => $this->container->get(Config::class),
-
         ]);
 
         $this->smarty->addPluginsDir([self::PLUGINS_DIR]);

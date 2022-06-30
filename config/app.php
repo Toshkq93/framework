@@ -4,7 +4,9 @@ return [
     'name' => env('APP_NAME'),
 
     'middleware' => [
-        \App\Middleware\ShareValidationErrors::class,
-        \App\Middleware\ClearValidationErrors::class,
+        \Core\Middleware\ShareValidationErrors::class,
+        \Core\Middleware\ClearValidationErrors::class,
+        \Core\Middleware\Authenticate::class,
+
     ]
 ];

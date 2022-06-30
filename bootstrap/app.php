@@ -8,6 +8,7 @@ use Core\Handler;
 use DI\ContainerBuilder;
 use Dotenv\Dotenv;
 use Dotenv\Exception\InvalidPathException;
+use Laminas\HttpHandlerRunner\Emitter\EmitterInterface;
 use League\Route\Router;
 use League\Route\Strategy\ApplicationStrategy;
 use League\Route\Strategy\StrategyInterface;
@@ -37,12 +38,12 @@ $router = $container->get(Router::class)->setStrategy($container->get(StrategyIn
 
 require_once base_path('routes/web.php');
 
-foreach ($container->get(Config::class)->get('app.middleware') as $middleware) {
-    $router->lazyMiddleware($middleware);
+foreach ($container->get(Config::class)->get('app.middleware') as $middleware){
+    $router->middleware($container->get($middleware));
 }
 
 try {
-    $router->dispatch(
+    $response = $router->dispatch(
         $container->get(ServerRequestInterface::class)
     );
 } catch (Exception $exception) {
@@ -51,5 +52,7 @@ try {
         $container->get(SessionInterface::class)
     );
 
-    $handler->response();
+    $response = $handler->response();
 }
+
+$container->get(EmitterInterface::class)->emit($response);

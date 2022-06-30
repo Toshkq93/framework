@@ -1,15 +1,19 @@
 <?php
 
+use App\Models\User;
+use Laminas\HttpHandlerRunner\Emitter\EmitterInterface;
+use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use League\Route\Router;
 use Psr\Container\ContainerInterface;
 use Somnambulist\Components\Validation\Factory;
 use Core\Loaders\ArrayLoader;
 use Core\{
+    Auth\Auth,
     BcryptHasher,
-    Session,
-    View
+    Session\Session,
+    View,
+    Config
 };
-use Core\Config;
 use Core\Contracts\{
     HasherInterface,
     SessionInterface
@@ -45,4 +49,12 @@ return [
     Router::class => new Router(),
     SessionInterface::class => new Session(),
     HasherInterface::class => new BcryptHasher(),
+    Auth::class => function (ContainerInterface $container){
+        return new Auth(
+            $container->get(User::class),
+            $container->get(HasherInterface::class),
+            $container->get(SessionInterface::class)
+        );
+    },
+    EmitterInterface::class => new SapiEmitter(),
 ];

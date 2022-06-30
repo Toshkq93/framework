@@ -2,29 +2,24 @@
 
 namespace Core;
 
-use App\Exceptions\ValidationException;
+use Core\Exceptions\ValidationException;
 use Laminas\Diactoros\ServerRequest;
 use Somnambulist\Components\Validation\Factory;
 
 abstract class Controller
 {
-    /**
-     * @param ServerRequest $request
-     * @param array $rules
-     * @return Factory
-     * @throws ValidationException
-     */
-    public function validate(ServerRequest $request, array $rules): Factory
+    public function validate(ServerRequest $request, array $rules)
     {
         $validator = (new Factory)->make(
             $request->getParsedBody() + $request->getUploadedFiles(),
             $rules
         );
+        $validator->validate();
 
-        if (!$validator->validate()){
+        if ($validator->fails()){
             throw new ValidationException($request, $validator->errors()->firstOfAll());
         }
 
-        return $validator;
+        return $validator->getValidData();
     }
 }

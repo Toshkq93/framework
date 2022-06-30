@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Middleware;
+namespace Core\Middleware;
 
 use Core\Contracts\SessionInterface;
 use Core\View;
 use Psr\Http\Message\{
     ResponseInterface,
     ServerRequestInterface,
-
 };
 use Psr\Http\Server\{
     MiddlewareInterface,

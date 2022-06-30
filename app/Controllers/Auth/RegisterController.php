@@ -9,14 +9,14 @@ class RegisterController extends Controller
 {
     public function register()
     {
-        view('auth.register');
+        return view('auth.register');
     }
 
     public function signup(ServerRequest $request)
     {
-        $this->validate($request, [
-            'email' => 'required|email',
-            'password' => 'required|min:6'
+        $data = $this->validate($request, [
+            'email' => ['required', 'email'],
+            'password' => ['required'],
         ]);
     }
 }

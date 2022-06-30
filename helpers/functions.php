@@ -5,20 +5,7 @@ use Core\{
     View
 };
 use Laminas\Diactoros\Response\RedirectResponse;
-use Psr\Http\Message\ServerRequestInterface;
-
-if (!function_exists('getValidUri')) {
-    function getValidUri()
-    {
-        $uri = $_SERVER['REQUEST_URI'];
-
-        if (false !== $pos = strpos($uri, '?')) {
-            $uri = substr($uri, 0, $pos);
-        }
-
-        return rawurldecode($uri);
-    }
-}
+use Psr\Http\Message\ResponseInterface;
 
 if (!function_exists('base_path')) {
     function base_path(string $path = '')
@@ -47,28 +34,22 @@ if (!function_exists('env')) {
     }
 }
 
-/*if (!function_exists('redirect')) {
+if (!function_exists('redirect')) {
     function redirect(string $url, int $status = 302, array $headers = [])
     {
-        return new \Laminas\Diactoros\Response($url, $status, $headers);
+        return new RedirectResponse($url, $status, $headers);
     }
-}*/
-
-/*if (!function_exists('back')) {
-    function back(): RedirectResponse
-    {
-        return redirect(
-            ContainerInstance::get()
-                ->get(ServerRequestInterface::class)
-                ->getServerParams()['HTTP_REFERER']
-        );
-    }
-}*/
+}
 
 if (!function_exists('view')) {
     function view(string $template, array $data = [])
     {
-        app(View::class)->render(str_replace('.', '/', $template) . '.tpl', $data);
+        $response = app(ResponseInterface::class);
+        $response->getBody()->write(
+            app(View::class)->render(str_replace('.', '/', $template) . '.tpl', $data)
+        );
+
+        return $response;
     }
 }
 

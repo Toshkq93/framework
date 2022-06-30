@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exceptions;
+namespace Core\Exceptions;
 
 use Exception;
 use Laminas\Diactoros\ServerRequest;
@@ -20,7 +20,7 @@ class ValidationException extends Exception
      */
     public function getPath(): string
     {
-        return '/auth/login';
+        return $this->request->getServerParams()['HTTP_REFERER'];
     }
 
     /**

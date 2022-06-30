@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Middleware;
+namespace Core\Middleware;
 
 use Core\Contracts\SessionInterface;
 use Psr\Http\Message\ResponseInterface;

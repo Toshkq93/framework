@@ -16,8 +16,7 @@
                     <a class="nav-link" href="#">{$auth->user()->first_name}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#"
-                       onclick="event.preventDefault(); document.getElementById('logout').submit();">Sign out</a>
+                    <a class="nav-link" href="{get_route name='auth.logout'}">Sign out</a>
                 </li>
             {/auth}
             {guest}
@@ -31,7 +30,3 @@
         </ul>
     </div>
 </nav>
-
-<form action="" method="POST" style="display: none;" id="logout">
-    <input type="hidden" name="" value="">
-</form>

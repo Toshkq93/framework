@@ -16,6 +16,11 @@ class Auth
     {
     }
 
+    public function logout()
+    {
+        $this->session->clear($this->key());
+    }
+
     public function attemp(string $username, string $password)
     {
         $user = $this->getByUserName($username);

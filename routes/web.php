@@ -2,6 +2,7 @@
 
 use App\Controllers\Auth\{
     LoginController,
+    LogoutController,
     RegisterController
 };
 use App\Controllers\HomeController;
@@ -15,3 +16,5 @@ $router->group('/auth', function ($route) {
     $route->get('login', [LoginController::class, 'login'])->setName('auth.login');
     $route->post('signin', [LoginController::class, 'signin'])->setName('auth.signin');
 });
+
+$router->get('/logout', [LogoutController::class, 'logout'])->setName('auth.logout');

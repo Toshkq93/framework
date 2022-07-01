@@ -18,7 +18,7 @@
 </head>
 <body>
 {include file="layout/navigation.tpl"}
-
+{include file="layout/flash.tpl"}
 <div class="container">
     {$content}
 </div>

@@ -6,6 +6,7 @@ use Core\{
 };
 use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 if (!function_exists('base_path')) {
     function base_path(string $path = '')
@@ -38,6 +39,15 @@ if (!function_exists('redirect')) {
     function redirect(string $url, int $status = 302, array $headers = [])
     {
         return new RedirectResponse($url, $status, $headers);
+    }
+}
+
+if (!function_exists('back')) {
+    function back()
+    {
+        $request = app(ServerRequestInterface::class);
+
+        return redirect($request->getServerParams()['HTTP_REFERER']);
     }
 }
 

@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">{*{$config->get('app.name')}*}</a>
+    <a class="navbar-brand" href="#">{$config->get('app.name')}</a>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
@@ -11,21 +11,23 @@
             </li>
         </ul>
         <ul class="navbar-nav">
-            {if false}
-            <li class="nav-item">
-                <a class="nav-link" href="#"></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#" onclick="event.preventDefault(); document.getElementById('logout').submit();">Sign out</a>
-            </li>
-            {else}
-            <li class="nav-item">
-                <a class="nav-link" href="{get_route name='auth.login'}" >Sign in</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{get_route name='auth.register'}">Create an account</a>
-            </li>
-            {/if}
+            {auth}
+                <li class="nav-item">
+                    <a class="nav-link" href="#">{$auth->user()->first_name}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"
+                       onclick="event.preventDefault(); document.getElementById('logout').submit();">Sign out</a>
+                </li>
+            {/auth}
+            {guest}
+                <li class="nav-item">
+                    <a class="nav-link" href="{get_route name='auth.login'}">Sign in</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{get_route name='auth.register'}">Create an account</a>
+                </li>
+            {/guest}
         </ul>
     </div>
 </nav>

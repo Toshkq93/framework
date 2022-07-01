@@ -2,6 +2,8 @@
 
 namespace Core;
 
+use Core\Auth\Auth;
+use Core\Session\Flash;
 use Psr\Container\ContainerInterface;
 use Smarty;
 
@@ -14,6 +16,7 @@ class View
     const CACHE_DIR = __DIR__ . '/../tmp/cache';
     const COMPILE_DIR = __DIR__ . '/../tmp/compiled';
     const PLUGINS_DIR = __DIR__ . '/../app/Views/smarty-plugins';
+    const CORE_PLUGINS_DIR = __DIR__ . '/View/smarty-plugins';
 
     public function __construct(ContainerInterface $container)
     {
@@ -47,6 +50,18 @@ class View
 
     private function setupSettings()
     {
+        $this->setConfig();
+        $this->createDirs();
+        $this->shareGlobalsProperties();
+
+        $this->smarty->addPluginsDir([
+            self::CORE_PLUGINS_DIR,
+            self::PLUGINS_DIR,
+        ]);
+    }
+
+    private function setConfig()
+    {
         $config = $this->container->get(Config::class);
         $config = $config->get('view.' . $config->get('view.default'));
 
@@ -59,9 +74,15 @@ class View
         $this->smarty->setCacheLifetime($config['smarty_cache_lifetime']);
         $this->smarty->setDebugging($config['smarty_debugging']);
         $this->smarty->setErrorReporting(E_ALL & ~E_NOTICE);
+    }
 
+    private function createDirs()
+    {
         if (!is_dir(self::PLUGINS_DIR)) {
             @mkdir(self::PLUGINS_DIR, 0777);
+        }
+        if (!is_dir(self::CORE_PLUGINS_DIR)) {
+            @mkdir(self::CORE_PLUGINS_DIR, 0777);
         }
         if (!is_dir(self::CACHE_DIR)) {
             @mkdir(self::CACHE_DIR, 0777);
@@ -69,11 +90,14 @@ class View
         if (!is_dir(self::COMPILE_DIR)) {
             @mkdir(self::COMPILE_DIR, 0777);
         }
+    }
 
+    private function shareGlobalsProperties()
+    {
         $this->shareGlobal([
             'config' => $this->container->get(Config::class),
+            'auth' => $this->container->get(Auth::class),
+            'flash' => $this->container->get(Flash::class),
         ]);
-
-        $this->smarty->addPluginsDir([self::PLUGINS_DIR]);
     }
 }

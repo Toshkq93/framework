@@ -4,17 +4,16 @@ namespace App\Controllers\Auth;
 
 use Core\Auth\Auth;
 use Core\Controller;
+use Core\Session\Flash;
 use Laminas\Diactoros\ServerRequest;
 
 class LoginController extends Controller
 {
-    protected $auth;
-
     public function __construct(
-        Auth $auth
+        protected Auth  $auth,
+        protected Flash $flash
     )
     {
-        $this->auth = $auth;
     }
 
     public function login()
@@ -26,13 +25,17 @@ class LoginController extends Controller
     {
         $data = $this->validate($request, [
             'email' => 'required|email',
-            'password' => 'required|min:6'
+            'password' => 'required'
         ]);
 
-        if (!$this->auth->attemp($data['email'], $data['password'])){
+        if (!$this->auth->attemp($data['email'], $data['password'])) {
+            $this->flash->set('error', 'Could not sign you in with those details.');
 
+            return back();
         }
 
-        return header('Location: /');
+        $this->flash->set('success', 'You are logged!');
+
+        return redirect('/');
     }
 }

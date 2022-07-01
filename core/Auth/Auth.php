@@ -20,8 +20,13 @@ class Auth
     {
         $user = $this->getByUserName($username);
 
-        if (!$user && $this->hasValidPassword($user, $password)) {
+        if (!$user or !$this->hasValidPassword($user->password, $password)) {
+
             return false;
+        }
+
+        if ($this->NeedRehash($user)) {
+            $this->rehashPassword($user);
         }
 
         $this->setUserSession($user);
@@ -33,6 +38,7 @@ class Auth
     {
         return $this->user;
     }
+
 
     public function hasUserInSession()
     {
@@ -46,10 +52,28 @@ class Auth
         $this->user = $user;
     }
 
-
     public function getById(int $id)
     {
         return $this->user->findOrFail($id);
+    }
+
+    public function check()
+    {
+        return $this->hasUserInSession();
+    }
+
+    protected function rehashPassword(User $user)
+    {
+        $this->user
+            ->findOrFail($user->id)
+            ->update([
+                'password' => $this->hasher->create($user->password)
+            ]);
+    }
+
+    protected function NeedRehash(User $user)
+    {
+        return $this->hasher->needsRehash($user->password);
     }
 
     protected function key()
@@ -62,13 +86,15 @@ class Auth
         $this->session->set('id', $user->id);
     }
 
-    protected function hasValidPassword(User $user, string $password)
+    protected function hasValidPassword(string $passwordHash, string $password)
     {
-        return $this->hasher->check($user->password, $password);
+        return $this->hasher->check($passwordHash, $password);
     }
 
     protected function getByUserName(string $username)
     {
-        return $this->user->where('email', $username)->first();
+        return $this->user
+            ->where('email', $username)
+            ->first();
     }
 }

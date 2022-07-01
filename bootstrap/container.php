@@ -1,13 +1,23 @@
 <?php
 
 use App\Models\User;
-use Laminas\HttpHandlerRunner\Emitter\EmitterInterface;
-use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use League\Route\Router;
 use Psr\Container\ContainerInterface;
 use Somnambulist\Components\Validation\Factory;
-use Core\Loaders\ArrayLoader;
-use Core\{Auth\Auth, BcryptHasher, Session\Flash, Session\Session, View, Config};
+use Core\{
+    Auth\Auth,
+    BcryptHasher,
+    Csrf,
+    Session\Flash,
+    Session\Session,
+    View,
+    Config,
+    Loaders\ArrayLoader
+};
+use Laminas\HttpHandlerRunner\Emitter\{
+    EmitterInterface,
+    SapiEmitter
+};
 use Core\Contracts\{
     HasherInterface,
     SessionInterface
@@ -53,6 +63,11 @@ return [
     EmitterInterface::class  => new SapiEmitter(),
     Flash::class             => function (ContainerInterface $container){
                                     return new Flash(
+                                        $container->get(SessionInterface::class)
+                                    );
+                                },
+    Csrf::class              => function (ContainerInterface $container){
+                                    return new Csrf(
                                         $container->get(SessionInterface::class)
                                     );
                                 },

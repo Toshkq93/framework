@@ -37,6 +37,11 @@ class Handler
         return redirect($exception->getPath());
     }
 
+    protected function handleCsrfTokenException(Exception $exception)
+    {
+        return view('layout.error_csrf');
+    }
+
     protected function unhandleException(Exception $exception)
     {
         throw $exception;

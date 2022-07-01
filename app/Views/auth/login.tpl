@@ -2,6 +2,7 @@
     <h1>Login: </h1>
     <div class="col-6">
         <form action="{get_route name='auth.signin'}" method="POST">
+            {csrf}
             <div class="form-group mt-2">
                 <label for="email">Email:</label>
                 {error name='email'}

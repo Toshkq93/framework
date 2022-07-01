@@ -98,6 +98,7 @@ class View
             'config' => $this->container->get(Config::class),
             'auth' => $this->container->get(Auth::class),
             'flash' => $this->container->get(Flash::class),
+            'csrf' => $this->container->get(Csrf::class)
         ]);
     }
 }

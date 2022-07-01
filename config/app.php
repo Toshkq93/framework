@@ -7,6 +7,6 @@ return [
         \Core\Middleware\ShareValidationErrors::class,
         \Core\Middleware\ClearValidationErrors::class,
         \Core\Middleware\Authenticate::class,
-
+        \Core\Middleware\CsrfVerify::class
     ]
 ];
